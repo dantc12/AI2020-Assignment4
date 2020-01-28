@@ -26,6 +26,47 @@ class Environment:
         print_debug("CREATED ENVIRONMENT WITH " + str(self.graph.num_of_vertices()) + " VERTICES, AND " +
                     str(self.graph.num_of_roads()) + " ROADS.")
 
+        self.stateDict = {}
+
+
+
+    #  state is combined of:
+    #  (location, people 1?, people 2?, carry(0, 1, 2, 3), blocked(true false unknown), time(1-7), saved(0, 1, 2, 3), term)
+    #  total number of num_of_vertex * 2 * 2 * 4 * 3 * 7 * 3 * 2 = 10,080 possible states
+    def generateUncertaintyTable(self, deadline_time=7):
+        bool = [True, False]
+        edge_stats = [True, False, -1]
+
+        possiblePeople = self.possibleSaveStates()
+        for vertex in self.graph.vertices:
+            for people_1 in bool:
+                for people_2 in bool:
+                    for num_carry in possiblePeople:
+                        for edge_stat in edge_stats:
+                            for time in range(1,deadline_time+1):
+                                for num_saved in possiblePeople:
+                                    for terminated in bool:
+                                        self.stateDict[(vertex, people_1, people_2, num_carry, edge_stat, time, num_saved, terminated)] = ["available actions", "value", "best"]
+
+
+    def possibleSaveStates(self):
+        possabilities = []
+        possabilities.append(0)
+
+        for vertex in self.graph.vertices:
+            if vertex.ppl_count > 0:
+                people_in_vertices.append(vertex.ppl_count)
+
+        combinations = list(combinations(range(len(people_in_vertices)-1)))
+
+        for combination in combinations:
+            num_of_people = 0
+            for item in combination:
+                num_of_people += people_in_vertices[int(item)]
+            possabilities.append(num_of_people)
+        return possabilities
+
+
     def update(self):
         for agent in self.agents:
             if agent.curr_state.is_terminated:
