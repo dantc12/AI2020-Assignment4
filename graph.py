@@ -44,6 +44,7 @@ class Vertex:
                 res.append(e.vertex_1)
         return res
 
+
     def get_connected_vertices_with_weights(self):
         res = []
         for e in self.connected_edges:
@@ -198,3 +199,7 @@ class Graph:
                 s = s + "has " + str(v.v_type) + " people in it, "
             s = s + "and has " + str(len(v.edges)) + " roads connected to it."
             print s
+
+    def is_mpd_terminate(self, state):
+        #TODO: implement termination state, change only last var, termination var to True.
+        pass

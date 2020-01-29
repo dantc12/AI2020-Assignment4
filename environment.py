@@ -27,7 +27,10 @@ class Environment:
                     str(self.graph.num_of_roads()) + " ROADS.")
 
         self.stateDict = {}
-
+        self.people1 = self.graph.get_vertex_from_string("V3")
+        self.people2 = self.graph.get_vertex_from_string("V4")
+        self.uncertain_edge = self.graph.get_edge_from_string("E3")
+        self.uncertain_edge_status = False #TODO:  do it randomly!
 
 
     #  state is combined of:
@@ -37,7 +40,7 @@ class Environment:
         bool = [True, False]
         edge_stats = [True, False, -1]
 
-        possiblePeople = self.possibleSaveStates()
+        possiblePeople = self.possiblePeopleCombinations()
         for vertex in self.graph.vertices:
             for people_1 in bool:
                 for people_2 in bool:
@@ -46,19 +49,46 @@ class Environment:
                             for time in range(1,deadline_time+1):
                                 for num_saved in possiblePeople:
                                     for terminated in bool:
-                                        self.stateDict[(vertex, people_1, people_2, num_carry, edge_stat, time, num_saved, terminated)] = ["available actions", "value", "best"]
+                                        self.stateDict[(vertex, people_1, people_2, num_carry, edge_stat, time, num_saved, terminated)] = ["possible actions", "value", "best"]
 
+    def getPossibleActions(self, state):
+        actions_list = []
+        additional_people = 0
+        vertex, people_1, people_2, num_carry, edge_stat, time, num_saved, terminated = state
+        current_vertext = self.graph.get_vertex_from_string("V" + vertex)
+        vertices_with_weights = current_vertext.get_connected_vertices_with_weights()
+        for neihgbor in vertices_with_weights:
+            curr_edge = self.graph.get_edge(neihgbor[0], current_vertext)
+            if curr_edge.__eq__(self.uncertain_edge):
+                if uncertain_edge_status is False:
+                    continue  # Edge is blocked
+                if uncertain_edge_status is -1:
+                    edge_stat = uncertain_edge_status
 
-    def possibleSaveStates(self):
+            if neihgbor[0].__eq__(self.people1):
+                additional_people = neihgbor[0].pick_up()
+                people_1 = 0
+            if neihgbor[0].__eq__(self.people2):
+                additional_people = neihgbor[0].pick_up()
+                people_2 = 0
+            num_carry += additional_people
+            if neihgbor[0].is_shelter():
+                num_saved += num_carry
+                num_carry = 0
+
+            currState = (neihgbor[0], people_1, people_2, num_carry, edge_stat, time + neihgbor[1], num_saved, False)
+            currState = self.graph.is_mpd_terminate(currState)  # TODO: implement termination check
+            actions_list.append(currState)
+
+    #  returns all the people combinations for example for people in 2 vertices {1,2} return {0, 1, 2, 3
+    def possiblePeopleCombinations(self):
         possabilities = []
         possabilities.append(0)
-
         for vertex in self.graph.vertices:
             if vertex.ppl_count > 0:
                 people_in_vertices.append(vertex.ppl_count)
 
         combinations = list(combinations(range(len(people_in_vertices)-1)))
-
         for combination in combinations:
             num_of_people = 0
             for item in combination:
