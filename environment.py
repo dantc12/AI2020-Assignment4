@@ -37,6 +37,8 @@ class Environment:
                     str(self.graph.num_of_roads()) + " ROADS.")
         print_debug("ENVIRONMENT STARTING STATE: " + str(self.env_state))
 
+        self.all_possible_states = []
+
         self.stateUtilityAndPolicyDict = {}
 
         ################## NEEDED? #################
@@ -123,14 +125,60 @@ class Environment:
         pass
 
     def initializeStatesDict(self):
-        all_possible_states = self.env_state.getAllPossibleStates()
-        print_debug(len(all_possible_states))
+        self.all_possible_states = self.env_state.getAllPossibleStates()
+        print_debug(len(self.all_possible_states))
         print_debug("")
-        for s in all_possible_states:
-            print_debug(str(s))
+        for s in self.all_possible_states:
+            self.stateUtilityAndPolicyDict[str(s)] = (0, "")
+        self.printStatesDict()
+        print_debug("")
 
+    def ValueIteration(self):
+        for s in self.all_possible_states:
+            state_reward = -1
+            if s.ag_loc.is_shelter() and s.prev_state.carrying_count > 0:
+                state_reward += s.prev_state.carrying_count
+            max_val = -float("inf")
+            best_a = ""
+            for a in s.get_pos_actions():
+                res_states = s.successor_fn_with_action(a)
+                val = 0
+                for res_state in res_states:
+                    val += self.stateUtilityAndPolicyDict[str(res_state)][0] * s.T(res_state)
+                if val > max_val:
+                    max_val = val
+                    best_a = a
 
+            self.stateUtilityAndPolicyDict[str(s)] = (state_reward + max_val, best_a)
+        # self.printStatesDict()
 
+    def runValueIteration(self, delta):
+        iterations = 1
+        prev_dict = deepcopy(self.stateUtilityAndPolicyDict)
+        self.ValueIteration()
+        max_change = 0
+        for s in self.all_possible_states:
+            change = self.stateUtilityAndPolicyDict[str(s)][0] - prev_dict[str(s)][0]
+            if change > max_change:
+                max_change = change
+        while max_change >= delta:
+            iterations += 1
+            prev_dict = deepcopy(self.stateUtilityAndPolicyDict)
+            self.ValueIteration()
+            max_change = 0
+            for s in self.all_possible_states:
+                change = self.stateUtilityAndPolicyDict[str(s)][0] - prev_dict[str(s)][0]
+                if change > max_change:
+                    max_change = change
+        self.printStatesDict()
+        print_debug(str(max_change))
+        print_debug(str(iterations))
+
+    def printStatesDict(self):
+        for s in self.all_possible_states:
+            print_debug(str(s) + ": " + str(self.stateUtilityAndPolicyDict[str(s)]))
+
+    # TODO
     def update(self):
         agent = self.agent
         if agent.curr_state.is_terminated:
@@ -195,6 +243,7 @@ class Environment:
     def simulation(self):
         #### DEBUGGING ######
         self.initializeStatesDict()
+        self.runValueIteration(0.3)
         # if not self.agent:
         #     self.print_env()
         # else:
