@@ -214,6 +214,18 @@ class Graph:
                 res += edge
         return res
 
+    def get_edges_blocked_status(self):
+        res = [""] * len(self.edges)
+        for e in self.edges:
+            if e.block_prob != 0.0:
+                res[e.index-1] = "U"
+            else:
+                if e.is_blocked:
+                    res[e.index-1] = "T"
+                else:
+                    res[e.index-1] = "F"
+        return res
+
     def __str__(self):
         s = str(self.vertices[0]) + "(D" + str(self.vertices[0].deadline) + ", "
         if not self.vertices[0].is_ppl_location():

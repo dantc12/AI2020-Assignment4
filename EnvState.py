@@ -20,10 +20,6 @@ class EnvState:
         self.is_terminated = is_terminated
 
     def successor_fn(self):
-        """
-        :type curr_state: agent.AgentState
-        """
-
         res_state = deepcopy(self)
         # Check for hurricane or  termination
         if self.ag_loc.deadline < self.time or self.is_terminated:
@@ -90,3 +86,28 @@ class EnvState:
         res_states.append(res_state)
 
         return [(actions[i], res_states[i]) for i in range(len(actions))]
+
+    def getAllPossibleStates(self):
+        res = []
+        poss_actions, successor_states = self.successor_fn()
+        if poss_actions:
+            res += successor_states
+            for successor_state in successor_states:
+                res += successor_state.getAllPossibleEnvStates()
+        return res
+
+    #  Environment state is of the following structure:
+    #  (AgentLocation, PeopleAtVertices?[], EdgesBlocked?[], CarryingCount, Time, SavedCount, Terminated?)
+    def __str__(self):
+        s = "("
+        s += str(self.ag_loc) + ", "
+        s += str(self.people_at_vertices) + ", "
+        s += str(self.edges_blocked_status) + ", "
+        s += str(self.carrying_count) + ", "
+        s += str(self.saved_count) + ", "
+        s += str(self.time) + ", "
+        s += str(self.is_terminated)
+        s += ")"
+
+        return s
+
