@@ -120,47 +120,6 @@ class SearchNode:
                     elif in_frontier:
                         frontier.replace(frontier_duplicate, child)
 
-    def realtime_a_star_search(self, problem, l_value):
-        frontier = AStarSearchNodePriorityQueue(self)
-        time_calculating = int(l_value * self.T)
-        if time_calculating >= 1:
-            self.state.time += time_calculating
-        explored_states = []
-        while True:
-            if frontier.is_empty():
-                print_debug("FRONTIER EMPTY, USED " + str(self.expansions) + " EXPANSIONS")
-                res = self.realtime_solution(node)
-                res.append("TERMINATE")
-                return res, node
-            node = frontier.pop()
-            if goal_test(problem, node.state):
-                print_info("CALCULATED ALL ACTIONS, TOOK " + str(self.expansions) + " EXPANSIONS, DEPTH: " + \
-                           str(node.depth))
-                print_info("PATH COST: " + str(node.path_cost))
-                print_info("ACTIONS:" + str(self.realtime_solution(node)) + " TO NODE: " + str(node.state))
-                return self.realtime_solution(node), node
-            explored_states.append(self.state)
-            print_debug("CURRENT EXPANSIONS: " + str(self.expansions) + " FRONTIER LENGTH: " + str(len(frontier.queue)))
-            if self.expansions > l_value:
-                print_debug("EXPANDED OVER L_VALUE, " + str(self.expansions) + " EXPANSIONS, DEPTH: " + str(node.depth))
-                return self.realtime_solution(node), node
-            child_nodes = expand(node, problem)
-            if child_nodes:
-                for child in child_nodes:
-                    explored = False
-                    in_frontier = False
-                    for state in explored_states:
-                        if repeat_state_check(child.state, state):
-                            explored = True
-                    for n in frontier.queue:
-                        if child.state == n.state:
-                            in_frontier = True
-                            frontier_duplicate = n
-                    if not explored and not in_frontier:
-                        frontier.insert(child)
-                    elif in_frontier:
-                        frontier.replace(frontier_duplicate, child)
-
     def __eq__(self, other):
         """
         :type other: SearchNode
@@ -497,27 +456,5 @@ class AStarSearchAgent(Agent):
         ag_env = percept
         if not self.seq:
             self.seq = self.curr_node.a_star_search(None, self.limit)
-        next_action = self.seq.pop(0)
-        return next_action
-
-
-class RealtimeAStarSearchAgent(Agent):
-    L_DEFAULT_VALUE = 10
-
-    def __init__(self, index, initial_state, l_value=L_DEFAULT_VALUE):
-        """
-
-        :type initial_state: agent.AgentState
-        :type index: int
-        """
-        Agent.__init__(self, index, initial_state)
-        self.l_value = l_value
-        self.curr_node = SearchNode(None, 0, None, 0, initial_state, initial_state)
-
-    def action(self, percept):
-        ag_env = percept
-        if not self.seq:
-            self.seq, res_node = self.curr_node.realtime_a_star_search(None, self.l_value)
-            self.curr_node = res_node
         next_action = self.seq.pop(0)
         return next_action
