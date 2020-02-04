@@ -2,7 +2,7 @@ from copy import copy, deepcopy
 
 from graph import Edge
 from graph import Vertex
-from helper_funcs import print_debug, print_query, print_info, dijkstra, get_min_index
+from helper_funcs import print_debug, print_query, print_info, get_min_index
 
 
 class Agent:

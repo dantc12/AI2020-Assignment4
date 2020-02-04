@@ -1,7 +1,8 @@
 from copy import deepcopy
 from graph import *
 
-from environment import Environment
+# from environment import Environment
+from helper_funcs import TrueFalseArrayCombinations
 
 
 class EnvState:
@@ -62,9 +63,9 @@ class EnvState:
             connected_poss_blocked_edges = []
             for e in dest_state.ag_loc.connected_edges:
                 if dest_state.edges_blocked_status[e.index-1] == "U":
-                    connected_poss_blocked_edges += e
+                    connected_poss_blocked_edges.append(e)
             if connected_poss_blocked_edges:
-                truefalse_perms = Environment.TrueFalseArrayCombinations(len(connected_poss_blocked_edges))
+                truefalse_perms = TrueFalseArrayCombinations(len(connected_poss_blocked_edges))
                 for opt in truefalse_perms:
                     dest_state_opt = deepcopy(dest_state)
                     for i in range(len(connected_poss_blocked_edges)):
@@ -89,11 +90,12 @@ class EnvState:
 
     def getAllPossibleStates(self):
         res = []
-        poss_actions, successor_states = self.successor_fn()
-        if poss_actions:
-            res += successor_states
-            for successor_state in successor_states:
-                res += successor_state.getAllPossibleEnvStates()
+        successor_func_output = self.successor_fn()
+        if not successor_func_output[0]:
+            return []
+        for (action, result_state) in successor_func_output:
+            res.append(result_state)
+            res += result_state.getAllPossibleStates()
         return res
 
     #  Environment state is of the following structure:

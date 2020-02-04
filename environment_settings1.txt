@@ -5,7 +5,7 @@
 
 #V2 D4 P3
 #V3 D7 P2  ; Vertex 3, deadline 7, has 2 evacuees
-#V4 D5 P1  ; Vertex 4, deadline 5, has 1 evacuee
+#V4 D10 P1  ; Vertex 4, deadline 5, has 1 evacuee
 
 #E1 1 2 W3   ; Edge from vertex 1 to vertex 2, weight 3
 #E2 2 3 W2   ; Edge from vertex 2 to vertex 3, weight 2

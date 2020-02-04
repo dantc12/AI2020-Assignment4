@@ -4,8 +4,12 @@
     <list default="true" id="281a7225-b545-441e-be02-7e9084065814" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/EnvState.py" beforeDir="false" afterPath="$PROJECT_DIR$/EnvState.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/agent.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/environment.py" beforeDir="false" afterPath="$PROJECT_DIR$/environment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/graph.py" beforeDir="false" afterPath="$PROJECT_DIR$/graph.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/environment_settings1.txt" beforeDir="false" afterPath="$PROJECT_DIR$/environment_settings1.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/helper_funcs.py" beforeDir="false" afterPath="$PROJECT_DIR$/helper_funcs.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/searchagents.py" beforeDir="false" afterPath="$PROJECT_DIR$/searchagents.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -111,7 +115,14 @@
       <option name="project" value="LOCAL" />
       <updated>1580836214423</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="added functions to get all possible graph states, now need to implement value iteration">
+      <created>1580837442851</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1580837442851</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -130,6 +141,7 @@
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="did tons of shit, created EnvState to handle all possible environment states. cleared lots of stuff in the main running function for simulations of the environment" />
-    <option name="LAST_COMMIT_MESSAGE" value="did tons of shit, created EnvState to handle all possible environment states. cleared lots of stuff in the main running function for simulations of the environment" />
+    <MESSAGE value="added functions to get all possible graph states, now need to implement value iteration" />
+    <option name="LAST_COMMIT_MESSAGE" value="added functions to get all possible graph states, now need to implement value iteration" />
   </component>
 </project>

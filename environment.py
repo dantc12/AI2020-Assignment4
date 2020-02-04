@@ -122,21 +122,13 @@ class Environment:
         # return possabilities
         pass
 
-    @staticmethod
-    def TrueFalseArrayCombinations(length):
-        if length == 0:
-            return []
-        elif length == 1:
-            return [["T"], ["F"]]
-        else:
-            res = []
-            shorter_combs = Environment.TrueFalseArrayCombinations(length - 1)
-            for comb in shorter_combs:
-                res += [comb + ["T"], comb + ["F"]]
-            return res
-
     def initializeStatesDict(self):
         all_possible_states = self.env_state.getAllPossibleStates()
+        print_debug(len(all_possible_states))
+        print_debug("")
+        for s in all_possible_states:
+            print_debug(str(s))
+
 
 
     def update(self):
@@ -201,31 +193,34 @@ class Environment:
         self.agent_scores[agent.index-1] = amount
 
     def simulation(self):
-        if not self.agent:
-            self.print_env()
-        else:
-            ag = self.agent
-            while not ag.curr_state.is_terminated:
-                if ag.is_traversing():
-                    ag.traverse_update()
-                for v in self.graph.vertices:
-                    if not v.is_shelter() and v.deadline < self.env_state.time:
-                        self.dead_ppl += v.ppl_count
-                        v.ppl_count = 0
-                print_debug("PRINTING ENVIRONMENT STATUS:")
-                self.print_env()
-                print_debug("AGENTS OPERATING IN ENVIRONMENT:")
-                self.update()
-                print_debug("DONE WITH AGENTS OPERATING IN ENVIRONMENT.")
+        #### DEBUGGING ######
+        self.initializeStatesDict()
+        # if not self.agent:
+        #     self.print_env()
+        # else:
+        #     ag = self.agent
+        #     while not ag.curr_state.is_terminated:
+        #         if ag.is_traversing():
+        #             ag.traverse_update()
+        #         for v in self.graph.vertices:
+        #             if not v.is_shelter() and v.deadline < self.env_state.time:
+        #                 self.dead_ppl += v.ppl_count
+        #                 v.ppl_count = 0
+        #         print_debug("PRINTING ENVIRONMENT STATUS:")
+        #         self.print_env()
+        #         print_debug("AGENTS OPERATING IN ENVIRONMENT:")
+        #         self.update()
+        #         print_debug("DONE WITH AGENTS OPERATING IN ENVIRONMENT.")
+        #
+        #         # print_info("PRESS ENTER FOR NEXT PHASE...")
+        #         # raw_input()
+        #         self.env_state.time += 1
+        #         print "------------------------------------------------"
+        #
+        # print_debug("GAME OVER")
+        # print_info("PRINTING ENVIRONMENT STATUS:")
+        # self.print_env()
 
-                # print_info("PRESS ENTER FOR NEXT PHASE...")
-                # raw_input()
-                self.env_state.time += 1
-                print "------------------------------------------------"
-
-        print_debug("GAME OVER")
-        print_info("PRINTING ENVIRONMENT STATUS:")
-        self.print_env()
 
     def print_env(self):
         print_info("TIME IS: " + str(self.env_state.time))

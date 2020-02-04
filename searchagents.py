@@ -3,7 +3,7 @@ from copy import deepcopy
 import agent
 import environment
 from agent import Agent, AgentState
-from helper_funcs import dijkstra_without_graph, print_debug, print_info
+from helper_funcs import print_debug, print_info
 
 
 class SearchNode:
