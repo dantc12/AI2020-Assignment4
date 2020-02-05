@@ -1,6 +1,6 @@
 import math
 from copy import deepcopy
-
+import random
 from agent import Agent
 from agent import ValueIterationAgent, AgentState
 from graph import Graph
@@ -127,6 +127,7 @@ class Environment:
         pass
 
     def initializeStatesDict(self):
+        self.setRealEdgesStatus()
         self.all_possible_states = self.env_state.getAllPossibleStates()
         self.all_possible_states = sorted(self.all_possible_states, key=attrgetter('ag_loc', 'time'))
         print_debug("Number of possible (reachable) states: " + str(len(self.all_possible_states)))
@@ -134,6 +135,14 @@ class Environment:
             self.stateUtilityAndPolicyDict[str(s)] = (0, "")
         # self.printStatesDict()
         # print_debug("")
+
+    # Determine the edge status for each uncertain edge
+    def setRealEdgesStatus(self):
+        for e in self.graph.edges:
+            if e.block_prob > 0 and e.block_prob < 1:
+                res = random.randint(1, 10)
+                if res <= e.block_prob*10:
+                    e.is_blocked = True
 
     def ValueIteration(self):
         old_dict = deepcopy(self.stateUtilityAndPolicyDict)
@@ -266,8 +275,13 @@ class Environment:
         #### DEBUGGING ######
         print_debug("PRINTING ENVIRONMENT STATUS:")
         self.print_env()
-        self.initializeStatesDict()
-        self.runValueIteration(0.3)
+        #start_loc = input("Insert a start vertex: (e.g. V1)")
+        #goal_loc = input("Insert a goal vertex: (e.g. V5)")
+        #start_loc_vertex = self.graph.get_vertex_from_string(start_loc)
+        #goal_loc_vertex = self.graph.get_vertex_from_string(goal_loc)
+
+        self.initializeStatesDict() #TODO: initialize everything according to the start_loc input
+        self.runValueIteration(0.5)
         self.add_agent(self.env_state.ag_loc)
         if not self.agent:
             self.print_env()
@@ -289,7 +303,7 @@ class Environment:
         #         # print_info("PRESS ENTER FOR NEXT PHASE...")
         #         # raw_input()
                 self.env_state.time += 1
-                print "------------------------------------------------"
+                print("------------------------------------------------")
 
         print_debug("GAME OVER")
         print_info("PRINTING ENVIRONMENT STATUS:")
