@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="281a7225-b545-441e-be02-7e9084065814" name="Default Changelist" comment="">
+    <list default="true" id="281a7225-b545-441e-be02-7e9084065814" name="Default Changelist" comment="i think i finished value iteration. the agent is using it's best policy to move. not sure about the utility values, but seems ok.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/EnvState.py" beforeDir="false" afterPath="$PROJECT_DIR$/EnvState.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/agent.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/environment.py" beforeDir="false" afterPath="$PROJECT_DIR$/environment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -125,7 +125,14 @@
       <option name="project" value="LOCAL" />
       <updated>1580839002956</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="close to finishing value iteration algo">
+      <created>1580844965639</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1580844965639</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -146,6 +153,8 @@
     <MESSAGE value="did tons of shit, created EnvState to handle all possible environment states. cleared lots of stuff in the main running function for simulations of the environment" />
     <MESSAGE value="added functions to get all possible graph states, now need to implement value iteration" />
     <MESSAGE value="tested, getting all possible states" />
-    <option name="LAST_COMMIT_MESSAGE" value="tested, getting all possible states" />
+    <MESSAGE value="close to finishing value iteration algo" />
+    <MESSAGE value="i think i finished value iteration. the agent is using it's best policy to move. not sure about the utility values, but seems ok." />
+    <option name="LAST_COMMIT_MESSAGE" value="i think i finished value iteration. the agent is using it's best policy to move. not sure about the utility values, but seems ok." />
   </component>
 </project>

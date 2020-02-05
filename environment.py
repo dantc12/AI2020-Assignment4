@@ -1,3 +1,4 @@
+import math
 from copy import deepcopy
 
 from agent import Agent
@@ -6,6 +7,7 @@ from graph import Graph
 from helper_funcs import print_debug, print_info, print_query
 from searchagents import GreedySearchAgent, AStarSearchAgent
 from EnvState import EnvState
+from operator import attrgetter
 
 
 class Environment:
@@ -126,30 +128,39 @@ class Environment:
 
     def initializeStatesDict(self):
         self.all_possible_states = self.env_state.getAllPossibleStates()
-        print_debug(len(self.all_possible_states))
-        print_debug("")
+        self.all_possible_states = sorted(self.all_possible_states, key=attrgetter('ag_loc', 'time'))
+        print_debug("Number of possible (reachable) states: " + str(len(self.all_possible_states)))
         for s in self.all_possible_states:
             self.stateUtilityAndPolicyDict[str(s)] = (0, "")
-        self.printStatesDict()
-        print_debug("")
+        # self.printStatesDict()
+        # print_debug("")
 
     def ValueIteration(self):
+        old_dict = deepcopy(self.stateUtilityAndPolicyDict)
         for s in self.all_possible_states:
-            state_reward = -1
-            if s.ag_loc.is_shelter() and s.prev_state.carrying_count > 0:
-                state_reward += s.prev_state.carrying_count
+            state_reward = -0.04
+            if s.is_terminated:
+                if s.ag_loc.is_shelter() and s.carrying_count == 0:
+                    state_reward += s.prev_state.saved_count
+                else:
+                    state_reward -= self.k_value + s.carrying_count
+            # else:
+            # if s.ag_loc.is_shelter() and s.prev_state.carrying_count > 0:
+            #     state_reward += s.prev_state.carrying_count
             max_val = -float("inf")
             best_a = ""
             for a in s.get_pos_actions():
                 res_states = s.successor_fn_with_action(a)
                 val = 0
                 for res_state in res_states:
-                    val += self.stateUtilityAndPolicyDict[str(res_state)][0] * s.T(res_state)
+                    val += old_dict[str(res_state)][0] * s.T(res_state)
                 if val > max_val:
                     max_val = val
                     best_a = a
-
+            if max_val == -float("inf"):
+                max_val = 0
             self.stateUtilityAndPolicyDict[str(s)] = (state_reward + max_val, best_a)
+        # print_debug("")
         # self.printStatesDict()
 
     def runValueIteration(self, delta):
@@ -158,7 +169,7 @@ class Environment:
         self.ValueIteration()
         max_change = 0
         for s in self.all_possible_states:
-            change = self.stateUtilityAndPolicyDict[str(s)][0] - prev_dict[str(s)][0]
+            change = abs(self.stateUtilityAndPolicyDict[str(s)][0] - prev_dict[str(s)][0])
             if change > max_change:
                 max_change = change
         while max_change >= delta:
@@ -170,15 +181,25 @@ class Environment:
                 change = self.stateUtilityAndPolicyDict[str(s)][0] - prev_dict[str(s)][0]
                 if change > max_change:
                     max_change = change
+            # print_debug(str(max_change))
+        print_debug("Took " + str(iterations) + " iterations. Utilities and best policy:")
         self.printStatesDict()
-        print_debug(str(max_change))
-        print_debug(str(iterations))
+
+    def getBestPolicy(self, ag_state):
+        """
+
+        :type ag_state: AgentState
+        """
+        for s in self.all_possible_states:
+            if s.compareToAgentState(ag_state):
+                return self.stateUtilityAndPolicyDict[str(s)][1]
+        raise Exception("No such state in dict" + str(ag_state))
 
     def printStatesDict(self):
+        # sorted_all_states = sorted(self.all_possible_states, key=attrgetter('ag_loc', 'time'))
         for s in self.all_possible_states:
-            print_debug(str(s) + ": " + str(self.stateUtilityAndPolicyDict[str(s)]))
+            print_debug(str(s) + "\t=\t" + str(self.stateUtilityAndPolicyDict[str(s)]))
 
-    # TODO
     def update(self):
         agent = self.agent
         if agent.curr_state.is_terminated:
@@ -188,20 +209,21 @@ class Environment:
         if agent.hurricane_check():
             print_debug("AGENT " + str(agent) + " GOT HIT BY HURRICANE AT " + str(ag_location))
             ppl_on_agent = agent.terminate()
-            self.reduce_agent_score(agent, ppl_on_agent + self.k_value)
+            self.reduce_agent_score(ppl_on_agent + self.k_value)
         else:
             if not agent.is_traversing():
                 agent.at_vertex_auto_actions()
                 agent.curr_state.v_people = self.get_people_array_considering_deadlines()
-                self.set_agent_score(agent, agent.curr_state.p_saved)
+                self.set_agent_score(agent.curr_state.p_saved)
                 agent_action = agent.action(self)
+                # self.env_state = self.env_state.successor_fn_with_action(agent_action)
                 if agent_action:
                     if agent_action == "TERMINATE":
                         ppl_on_agent = agent.terminate()
                         if ppl_on_agent > 0:
-                            self.reduce_agent_score(agent, ppl_on_agent + self.k_value)
+                            self.reduce_agent_score(ppl_on_agent + self.k_value)
                         elif not agent.curr_state.curr_location.is_shelter():
-                            self.reduce_agent_score(agent, self.k_value)
+                            self.reduce_agent_score(self.k_value)
                     else:  # "TRAVERSE"
                         dest_e = None
                         dest_v = None
@@ -227,49 +249,51 @@ class Environment:
     def get_people_array_considering_deadlines(self):
         res = self.graph.get_people_array()
         for i in range(len(res)):
-            if self.graph.vertices[i].deadline < self.env_time:
+            if self.graph.vertices[i].deadline < self.env_state.time:
                 res[i] = 0
         return res
 
-    def add_agent_score(self, agent, amount):
-        self.agent_scores[agent.index-1] = self.agent_scores[agent.index-1] + amount
+    def add_agent_score(self, amount):
+        self.agent_score += amount
 
-    def reduce_agent_score(self, agent, amount):
-        self.agent_scores[agent.index-1] = self.agent_scores[agent.index-1] - amount
+    def reduce_agent_score(self, amount):
+        self.agent_score -= amount
 
-    def set_agent_score(self, agent, amount):
-        self.agent_scores[agent.index-1] = amount
+    def set_agent_score(self, amount):
+        self.agent_score = amount
 
     def simulation(self):
         #### DEBUGGING ######
+        print_debug("PRINTING ENVIRONMENT STATUS:")
+        self.print_env()
         self.initializeStatesDict()
         self.runValueIteration(0.3)
-        # if not self.agent:
-        #     self.print_env()
-        # else:
-        #     ag = self.agent
-        #     while not ag.curr_state.is_terminated:
-        #         if ag.is_traversing():
-        #             ag.traverse_update()
-        #         for v in self.graph.vertices:
-        #             if not v.is_shelter() and v.deadline < self.env_state.time:
-        #                 self.dead_ppl += v.ppl_count
-        #                 v.ppl_count = 0
-        #         print_debug("PRINTING ENVIRONMENT STATUS:")
-        #         self.print_env()
-        #         print_debug("AGENTS OPERATING IN ENVIRONMENT:")
-        #         self.update()
-        #         print_debug("DONE WITH AGENTS OPERATING IN ENVIRONMENT.")
+        self.add_agent(self.env_state.ag_loc)
+        if not self.agent:
+            self.print_env()
+        else:
+            ag = self.agent
+            while not ag.curr_state.is_terminated:
+                if ag.is_traversing():
+                    ag.traverse_update()
+                for v in self.graph.vertices:
+                    if not v.is_shelter() and v.deadline < self.env_state.time:
+                        self.dead_ppl += v.ppl_count
+                        v.ppl_count = 0
+                print_debug("PRINTING ENVIRONMENT STATUS:")
+                self.print_changes()
+                print_debug("AGENTS OPERATING IN ENVIRONMENT:")
+                self.update()
+                print_debug("DONE WITH AGENTS OPERATING IN ENVIRONMENT.")
         #
         #         # print_info("PRESS ENTER FOR NEXT PHASE...")
         #         # raw_input()
-        #         self.env_state.time += 1
-        #         print "------------------------------------------------"
-        #
-        # print_debug("GAME OVER")
-        # print_info("PRINTING ENVIRONMENT STATUS:")
-        # self.print_env()
+                self.env_state.time += 1
+                print "------------------------------------------------"
 
+        print_debug("GAME OVER")
+        print_info("PRINTING ENVIRONMENT STATUS:")
+        self.print_env()
 
     def print_env(self):
         print_info("TIME IS: " + str(self.env_state.time))
@@ -302,4 +326,13 @@ class Environment:
         print_info("AGENTS: " + str(ag_names))
         print_info("AGENTS SCORES: " + str(self.agent_score))
         print_info("AGENTS STATES: " + str(ag_states))
+
+    def print_changes(self):
+        print_info("TIME IS: " + str(self.env_state.time))
+        print_info("OUR VERTICES PEOPLE COUNT: ")
+        people_arr = self.graph.get_people_array_with_shelter()
+        print_info(str(people_arr))
+        ppl_saved = sum([v.ppl_count for v in self.graph.vertices if v.is_shelter()])
+        print_info("PEOPLE SAVED: " + str(ppl_saved) + "/" + str(self.total_ppl))
+        print_info("AGENT STATE: " +str(str(self.agent.curr_state)))
 

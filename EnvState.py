@@ -1,4 +1,6 @@
 from copy import deepcopy
+
+from agent import AgentState
 from graph import *
 
 # from environment import Environment
@@ -33,7 +35,7 @@ class EnvState:
         actions = []  # type: list[str]
         res_states = []  # type:list[EnvState]
         # Removing blocked edges
-        non_blocked_edges = [edge for edge in self.ag_loc.connected_edges if not edge.is_blocked]
+        non_blocked_edges = [edge for edge in self.ag_loc.connected_edges if not self.edge_blocked_in_state(edge)]
         for edge in non_blocked_edges:
             # Building the dest state
             dest_state = deepcopy(res_state)
@@ -100,7 +102,7 @@ class EnvState:
 
         if action[0] == "E":
             edge = self.ag_loc.graph.get_edge_from_string(action)
-            if edge.is_blocked:
+            if self.edge_blocked_in_state(edge):
                 return [res_state]
             # Building the dest state
             dest_state = deepcopy(res_state)
@@ -169,28 +171,49 @@ class EnvState:
                     p = p * e.block_prob
                 else:
                     p = p * (1 - e.block_prob)
-            print_debug("P = " + str(p))
+            # print_debug("P = " + str(p))
             return p
         else:
             return 1.0
 
     def get_pos_actions(self):
         res = []
-        for e in self.ag_loc.connected_edges:
-            if not e.is_blocked:
-                res.append(str(e))
-        res.append("TERMINATE")
+        if not self.is_terminated:
+            for e in self.ag_loc.connected_edges:
+                if not self.edge_blocked_in_state(e):
+                    res.append(str(e))
+            res.append("TERMINATE")
         return res
 
     def getAllPossibleStates(self):
-        res = []
+        myself = deepcopy(self)
+        res = [myself]
         successor_func_output = self.successor_fn()
-        if not successor_func_output[0]:
-            return []
-        for (action, result_state) in successor_func_output:
-            res.append(result_state)
-            res += result_state.getAllPossibleStates()
+        if successor_func_output[0]:
+            for (action, result_state) in successor_func_output:
+                # res.append(result_state)
+                res += result_state.getAllPossibleStates()
         return res
+
+    def edge_blocked_in_state(self, edge):
+        """
+
+        :type edge: graph.Edge
+        """
+        return self.edges_blocked_status[edge.index-1] == "T"
+
+    def compareToAgentState(self, agent_state):
+        """
+
+        :type agent_state: AgentState
+        """
+        for e in agent_state.curr_location.connected_edges:
+            if e.is_blocked != self.edge_blocked_in_state(e):
+                return False
+        return self.ag_loc == agent_state.curr_location and \
+               self.people_at_vertices == agent_state.curr_location.graph.get_people_array_with_shelter() and \
+               self.carrying_count == agent_state.p_carrying and self.saved_count == agent_state.p_saved and \
+               self.time == agent_state.time and self.is_terminated == agent_state.is_terminated
 
     #  Environment state is of the following structure:
     #  (AgentLocation, PeopleAtVertices?[], EdgesBlocked?[], CarryingCount, Time, SavedCount, Terminated?)

@@ -84,15 +84,17 @@ class ValueIterationAgent(Agent):
 
     def action(self, percept):
         ag_env = percept
-        ag_location = self.curr_state.curr_location
-
+        # ag_location = self.curr_state.curr_location
+        #
         # Now to the actual action
-        print_debug("HUMAN AGENT " + str(self) + " ACTION:")
-        print_info("PRINTING STATE OF " + str(self) + ":")
-        print_info(self.curr_state)
-        print_query("Please enter next move:")
-        input_action = str(raw_input())
-        return input_action
+        # print_debug("HUMAN AGENT " + str(self) + " ACTION:")
+        # print_info("PRINTING STATE OF " + str(self) + ":")
+        # print_info(self.curr_state)
+        # print_query("Please enter next move:")
+        # input_action = str(raw_input())
+        # return input_action
+        action = ag_env.getBestPolicy(self.curr_state)
+        return action
 
 
 # class GreedyAgent(Agent):
