@@ -2,15 +2,19 @@ from copy import deepcopy
 import random
 from agent import ValueIterationAgent, AgentState
 from graph import Graph
-from helper_funcs import print_debug, print_info
+from helper_funcs import print_debug, print_info, print_query
 from EnvState import EnvState
 from operator import attrgetter
+import timeit
 
 
 class Environment:
 
     PERCEPT = None
     K_DEFAULT_VALUE = 2
+
+    VALUE_ITERATION_DELTA = 0.5
+    BASE_STATE_REWARD = 0
 
     def __init__(self, config_file_path, k_value=K_DEFAULT_VALUE):
         self.graph = Graph(config_file_path)
@@ -35,9 +39,11 @@ class Environment:
         self.all_possible_states = []
         self.stateUtilityAndPolicyDict = {}
 
-        print_debug("CREATED ENVIRONMENT WITH " + str(self.graph.num_of_vertices()) + " VERTICES, AND " +
+        print_info("CREATED ENVIRONMENT WITH " + str(self.graph.num_of_vertices()) + " VERTICES, AND " +
                     str(self.graph.num_of_roads()) + " ROADS.")
-        print_debug("ENVIRONMENT STARTING STATE: " + str(self.env_state))
+        print_info("OUR GRAPH:")
+        print str(self.graph)
+        print_info("ENVIRONMENT STARTING STATE: " + str(self.env_state))
 
         ################## NEEDED? #################
         # self.people1 = self.graph.get_vertex_from_string("V3")
@@ -123,7 +129,6 @@ class Environment:
     #     pass
 
     def initializeStatesDict(self):
-        self.setRealEdgesStatus()
         self.all_possible_states = self.env_state.getAllPossibleStates()
         self.all_possible_states = sorted(self.all_possible_states, key=attrgetter('ag_loc', 'time'))
         print_debug("Number of possible (reachable) states: " + str(len(self.all_possible_states)))
@@ -135,7 +140,7 @@ class Environment:
     # Determine the edge status for each uncertain edge
     def setRealEdgesStatus(self):
         for e in self.graph.edges:
-            if e.block_prob > 0 and e.block_prob < 1:
+            if 0 < e.block_prob < 1:
                 res = random.randint(1, 10)
                 if res <= e.block_prob*10:
                     e.is_blocked = True
@@ -143,15 +148,12 @@ class Environment:
     def ValueIteration(self):
         old_dict = deepcopy(self.stateUtilityAndPolicyDict)
         for s in self.all_possible_states:
-            state_reward = -0.04
+            state_reward = Environment.BASE_STATE_REWARD
             if s.is_terminated:
                 if s.ag_loc.is_shelter() and s.carrying_count == 0:
                     state_reward += s.prev_state.saved_count
                 else:
                     state_reward -= self.k_value + s.carrying_count
-            # else:
-            # if s.ag_loc.is_shelter() and s.prev_state.carrying_count > 0:
-            #     state_reward += s.prev_state.carrying_count
             max_val = -float("inf")
             best_a = ""
             for a in s.get_pos_actions():
@@ -164,12 +166,14 @@ class Environment:
                     best_a = a
             if max_val == -float("inf"):
                 max_val = 0
-            self.stateUtilityAndPolicyDict[str(s)] = (state_reward + max_val, best_a)
+            self.stateUtilityAndPolicyDict[str(s)] = (round(state_reward + max_val, 2), best_a)
         # print_debug("")
         # self.printStatesDict()
 
     def runValueIteration(self, delta):
+        print_debug("RUNNING VALUE ITERATION ALGORITHM:")
         iterations = 1
+        start = timeit.default_timer()
         prev_dict = deepcopy(self.stateUtilityAndPolicyDict)
         self.ValueIteration()
         max_change = 0
@@ -187,7 +191,10 @@ class Environment:
                 if change > max_change:
                     max_change = change
             # print_debug(str(max_change))
-        print_debug("Took " + str(iterations) + " iterations. Utilities and best policy:")
+        stop = timeit.default_timer()
+        print_debug("Took " + str(iterations) + " iterations, " + str(round(stop - start, 2)) +
+                    " seconds.")
+        print_debug("Utilities and best policy:")
         self.printStatesDict()
 
     def getBestPolicy(self, ag_state):
@@ -268,39 +275,41 @@ class Environment:
         self.agent_score = amount
 
     def simulation(self):
-        #### DEBUGGING ######
-        print_debug("PRINTING ENVIRONMENT STATUS:")
-        self.print_env()
-        # start_loc = input("Insert a start vertex: (e.g. V1)")
-        # goal_loc = input("Insert a goal vertex: (e.g. V5)")
-        # start_loc_vertex = self.graph.get_vertex_from_string(start_loc)
-        # goal_loc_vertex = self.graph.get_vertex_from_string(goal_loc)
+        print "------------------------------------------------"
+        self.initializeStatesDict()
+        self.runValueIteration(Environment.VALUE_ITERATION_DELTA)
+        print_query("LET AN AGENT PLAY IT OUT? (Y/N)")
+        ans = input()
+        if ans == 'Y':
+            print_info("STARTING SIMULATION:")
+            self.setRealEdgesStatus()
+            self.add_agent(self.env_state.ag_loc)
+            print_info("CREATED RANDOM INSTANCE OF ENVIRONMENT:")
+            self.print_env()
+            if not self.agent:
+                self.print_env()
+            else:
+                ag = self.agent
+                while not ag.curr_state.is_terminated:
+                    if ag.is_traversing():
+                        ag.traverse_update()
+                    for v in self.graph.vertices:
+                        if not v.is_shelter() and v.deadline < self.env_state.time:
+                            self.dead_ppl += v.ppl_count
+                            v.ppl_count = 0
+                    print_debug("PRINTING ENVIRONMENT STATUS:")
+                    self.print_changes()
+                    print_debug("AGENTS OPERATING IN ENVIRONMENT:")
+                    self.update()
+                    print_debug("DONE WITH AGENTS OPERATING IN ENVIRONMENT.")
+                    self.env_state.time += 1
+                    print("------------------------------------------------")
 
-        self.initializeStatesDict() #TODO: initialize everything according to the start_loc input
-        self.runValueIteration(0.5)
-        self.add_agent(self.env_state.ag_loc)
-        if not self.agent:
+            print_debug("GAME OVER")
+            print_info("PRINTING ENVIRONMENT STATUS:")
             self.print_env()
         else:
-            ag = self.agent
-            while not ag.curr_state.is_terminated:
-                if ag.is_traversing():
-                    ag.traverse_update()
-                for v in self.graph.vertices:
-                    if not v.is_shelter() and v.deadline < self.env_state.time:
-                        self.dead_ppl += v.ppl_count
-                        v.ppl_count = 0
-                print_debug("PRINTING ENVIRONMENT STATUS:")
-                self.print_changes()
-                print_debug("AGENTS OPERATING IN ENVIRONMENT:")
-                self.update()
-                print_debug("DONE WITH AGENTS OPERATING IN ENVIRONMENT.")
-                self.env_state.time += 1
-                print("------------------------------------------------")
-
-        print_debug("GAME OVER")
-        print_info("PRINTING ENVIRONMENT STATUS:")
-        self.print_env()
+            pass  # TODO: infrastructure for more simulations
 
     def print_env(self):
         print_info("TIME IS: " + str(self.env_state.time))
@@ -320,6 +329,10 @@ class Environment:
         print_info("OUR VERTICES PEOPLE COUNT: ")
         people_arr = self.graph.get_people_array_with_shelter()
         print_info(str(people_arr))
+
+        print_info("OUR EDGES ACTUAL BLOCKAGE STATUS:")
+        edges_actual_blockage_status = self.graph.get_edges_actual_blocked_status()
+        print_info(str(edges_actual_blockage_status))
 
         ppl_saved = sum([v.ppl_count for v in self.graph.vertices if v.is_shelter()])
         print_info("PEOPLE SAVED: " + str(ppl_saved) + "/" + str(self.total_ppl))

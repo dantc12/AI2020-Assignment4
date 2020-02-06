@@ -214,6 +214,15 @@ class Graph:
                 res += edge
         return res
 
+    def get_edges_actual_blocked_status(self):
+        res = [""] * len(self.edges)
+        for e in self.edges:
+            if e.is_blocked:
+                res[e.index - 1] = "T"
+            else:
+                res[e.index - 1] = "F"
+        return res
+
     def get_edges_blocked_status(self):
         res = [""] * len(self.edges)
         for e in self.edges:

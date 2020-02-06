@@ -2,14 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="281a7225-b545-441e-be02-7e9084065814" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/dictionaries/dantc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dictionaries/dantc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/EnvState.py" beforeDir="false" afterPath="$PROJECT_DIR$/EnvState.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/agent.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/environment.py" beforeDir="false" afterPath="$PROJECT_DIR$/environment.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/environment_settings1.txt" beforeDir="false" afterPath="$PROJECT_DIR$/environment_settings1.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/graph.py" beforeDir="false" afterPath="$PROJECT_DIR$/graph.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/helper_funcs.py" beforeDir="false" afterPath="$PROJECT_DIR$/helper_funcs.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/searchagents.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -34,7 +32,8 @@
   <component name="PropertiesComponent">
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../AI2020-Assignment3/bayesNetwork.py" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../AI2020-Assignment2/environment.py" />
+    <property name="restartRequiresConfirmation" value="false" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -143,7 +142,14 @@
       <option name="project" value="LOCAL" />
       <updated>1580902415578</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="cleaned up the code a bit">
+      <created>1580968794029</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1580968794029</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -166,6 +172,8 @@
     <MESSAGE value="tested, getting all possible states" />
     <MESSAGE value="close to finishing value iteration algo" />
     <MESSAGE value="i think i finished value iteration. the agent is using it's best policy to move. not sure about the utility values, but seems ok." />
-    <option name="LAST_COMMIT_MESSAGE" value="i think i finished value iteration. the agent is using it's best policy to move. not sure about the utility values, but seems ok." />
+    <MESSAGE value="cleaned up the code a biy" />
+    <MESSAGE value="cleaned up the code a bit" />
+    <option name="LAST_COMMIT_MESSAGE" value="cleaned up the code a bit" />
   </component>
 </project>
