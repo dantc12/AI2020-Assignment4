@@ -30,14 +30,14 @@ def print_query(s):
     print "QUERY:   " + str(s)
 
 
-def get_min_index(arr):
-    min_index = 0
-    min_val = arr[0]
-    for i in range(1, len(arr)):
-        if arr[i] < min_val:
-            min_index = i
-            min_val = arr[i]
-    return min_index
+# def get_min_index(arr):
+#     min_index = 0
+#     min_val = arr[0]
+#     for i in range(1, len(arr)):
+#         if arr[i] < min_val:
+#             min_index = i
+#             min_val = arr[i]
+#     return min_index
 
 
 def TrueFalseArrayCombinations(length):

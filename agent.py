@@ -1,8 +1,5 @@
-from copy import copy, deepcopy
-
-from graph import Edge
-from graph import Vertex
-from helper_funcs import print_debug, print_query, print_info, get_min_index
+from graph import Edge, Vertex
+from helper_funcs import print_debug
 
 
 class Agent:
@@ -12,11 +9,11 @@ class Agent:
 
         self.seq = []
 
-    def formulate_goal(self, state):
-        return None
-
-    def formulate_problem(self, state, goal):
-        return None
+    # def formulate_goal(self, state):
+    #     return None
+    #
+    # def formulate_problem(self, state, goal):
+    #     return None
 
     def action(self, percept):
         return None
@@ -84,119 +81,8 @@ class ValueIterationAgent(Agent):
 
     def action(self, percept):
         ag_env = percept
-        # ag_location = self.curr_state.curr_location
-        #
-        # Now to the actual action
-        # print_debug("HUMAN AGENT " + str(self) + " ACTION:")
-        # print_info("PRINTING STATE OF " + str(self) + ":")
-        # print_info(self.curr_state)
-        # print_query("Please enter next move:")
-        # input_action = str(raw_input())
-        # return input_action
         action = ag_env.getBestPolicy(self.curr_state)
         return action
-
-
-# class GreedyAgent(Agent):
-#     def __init__(self, index, initial_state):
-#         Agent.__init__(self, index, initial_state)
-#
-#     def formulate_goal(self, state):
-#         return None
-#
-#     def formulate_problem(self, state, goal):
-#         return None
-#
-#     def action(self, percept):
-#         ag_env = percept
-#         self.curr_state.v_people = ag_env.get_people_array_considering_deadlines()  # Updating people status for myself
-#         print_debug("GREEDY AGENT " + str(self) + " ACTION:")
-#         curr_graph = deepcopy(ag_env.graph)
-#         curr_graph.remove_blocked_edges()
-#         curr_vertex = curr_graph.vertices[self.curr_state.curr_location.index-1]
-#         if not curr_vertex.get_connected_vertices():
-#             return "TERMINATE"
-#         distances, paths = dijkstra(curr_graph, curr_vertex)
-#         distances[curr_vertex.index - 1] = float("inf")
-#
-#         if self.curr_state.p_carrying > 0:
-#             print_debug("LOOKING FOR CLOSEST SHELTER")
-#             for v in curr_graph.vertices:
-#                 if not v.is_shelter():
-#                     distances[v.index - 1] = float("inf")
-#         else:
-#             print_debug("LOOKING FOR CLOSEST PEOPLE LOCATION")
-#             for v in curr_graph.vertices:
-#                 if v.is_shelter():
-#                     distances[v.index - 1] = float("inf")
-#                 elif v.ppl_count == 0:
-#                     distances[v.index - 1] = float("inf")
-#
-#         min_dist_index = get_min_index(distances)
-#         min_dist_v_index = min_dist_index + 1
-#
-#         if distances[min_dist_index] == float("inf"):  # We have nowhere to go!
-#             return "TERMINATE"
-#
-#         print_debug("AIMING FOR V" + str(min_dist_v_index) + " at distance " + str(distances[min_dist_index]))
-#         next_move_v_index = paths[min_dist_index][1].index
-#         print_debug("NEXT MOVE IS TO V" + str(next_move_v_index))
-#         return "V" + str(next_move_v_index)
-#
-#
-# class VandalAgent(Agent):
-#     def __init__(self, index, initial_state):
-#         Agent.__init__(self, index, initial_state)
-#         self.no_ops_timer = len(self.curr_state.v_people)  # V
-#         self.block_timer = 0
-#
-#     def formulate_goal(self, state):
-#         return None
-#
-#     def formulate_problem(self, state, goal):
-#         return None
-#
-#     def action(self, percept):
-#         ag_env = percept
-#         print_debug("VANDAL AGENT " + str(self) + " ACTION:")
-#         if self.no_ops_timer > 0:
-#             self.no_ops_timer = self.no_ops_timer - 1
-#             return None
-#         else:
-#             curr_graph_without_blocks = deepcopy(ag_env.graph)
-#             curr_graph_without_blocks.remove_blocked_edges()
-#             connected_edges = self.curr_state.curr_location.connected_edges
-#             connected_edges_without_blocks = \
-#                 curr_graph_without_blocks.vertices[self.curr_state.curr_location.index-1].connected_edges
-#             if not connected_edges or not connected_edges_without_blocks:
-#                 print_debug("NO ROADS FROM HERE.")
-#                 return "TERMINATE"
-#
-#             if self.block_timer == 0:
-#                 weights = [connected_edges_without_blocks[i].weight for i in range(len(connected_edges_without_blocks))]
-#                 min_weight_index = get_min_index(weights)
-#
-#                 target_edge = connected_edges_without_blocks[min_weight_index]
-#                 real_target_edge = ag_env.graph.edges[target_edge.index-1]
-#                 print_debug("BLOCKING EDGE " + str(real_target_edge))
-#                 real_target_edge.block_road()
-#                 self.block_timer = 1
-#                 return None
-#             else:
-#                 weights = [connected_edges_without_blocks[i].weight for i in range(len(connected_edges_without_blocks))]
-#                 min_weight_index = get_min_index(weights)
-#
-#                 target_edge = connected_edges_without_blocks[min_weight_index]
-#                 real_target_edge = ag_env.graph.edges[target_edge.index - 1]
-#                 self.block_timer = 0
-#                 self.reset_no_ops_timer()
-#                 return str(real_target_edge)
-#
-#     def at_vertex_auto_actions(self):
-#         return None
-#
-#     def reset_no_ops_timer(self):
-#         self.no_ops_timer = len(self.curr_state.v_people)  # V
 
 
 class AgentState:

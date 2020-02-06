@@ -7,7 +7,7 @@ class Vertex:
         # Can be: 'START', 'SHELTER', or 'P' for a people location
         self.v_type = v_type  # type: str
 
-        self.deadline = deadline  # type: int
+        self.deadline = deadline
         self.ppl_count = ppl_count  # type: int
 
         self.connected_edges = []  # type: list[Edge]
@@ -261,6 +261,5 @@ class Graph:
     #         s = s + "and has " + str(len(v.edges)) + " roads connected to it."
     #         print s
 
-    def is_mpd_terminate(self, state):
-        # TODO: implement termination state, change only last var, termination var to True.
-        pass
+    # def is_mpd_terminate(self, state):
+    #     pass

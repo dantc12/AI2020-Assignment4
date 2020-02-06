@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="281a7225-b545-441e-be02-7e9084065814" name="Default Changelist" comment="i think i finished value iteration. the agent is using it's best policy to move. not sure about the utility values, but seems ok.">
+    <list default="true" id="281a7225-b545-441e-be02-7e9084065814" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/dictionaries/dantc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dictionaries/dantc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/EnvState.py" beforeDir="false" afterPath="$PROJECT_DIR$/EnvState.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/agent.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/environment.py" beforeDir="false" afterPath="$PROJECT_DIR$/environment.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/graph.py" beforeDir="false" afterPath="$PROJECT_DIR$/graph.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/helper_funcs.py" beforeDir="false" afterPath="$PROJECT_DIR$/helper_funcs.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/searchagents.py" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -132,7 +136,14 @@
       <option name="project" value="LOCAL" />
       <updated>1580844965639</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="i think i finished value iteration. the agent is using it's best policy to move. not sure about the utility values, but seems ok.">
+      <created>1580902415578</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1580902415578</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
