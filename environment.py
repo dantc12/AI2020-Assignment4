@@ -18,6 +18,7 @@ class Environment:
 
     def __init__(self, config_file_path, k_value=K_DEFAULT_VALUE):
         self.graph = Graph(config_file_path)
+        self.grapCopy = deepcopy(self.graph)
         # self.env_time = 0
         # Array of the actual agents running in the environment
         self.agent = None
@@ -42,91 +43,20 @@ class Environment:
         print_info("CREATED ENVIRONMENT WITH " + str(self.graph.num_of_vertices()) + " VERTICES, AND " +
                     str(self.graph.num_of_roads()) + " ROADS.")
         print_info("OUR GRAPH:")
-        print str(self.graph)
+        print (str(self.graph))
         print_info("ENVIRONMENT STARTING STATE: " + str(self.env_state))
 
-        ################## NEEDED? #################
-        # self.people1 = self.graph.get_vertex_from_string("V3")
-        # self.people2 = self.graph.get_vertex_from_string("V4")
-        # self.uncertain_edge = self.graph.get_edge_from_string("E3")
-        # self.uncertain_edge_status = False  # TODO:  do it randomly!
-
-    #  Environment state is of the following structure:
-    #  (AgentLocation, PeopleAtVertices?[], EdgesBlocked?[], CarryingCount, Time, SavedCount, Terminated?)
-
-    ################## NEEDED? #################
-    #  ---- total number of num_of_vertex * 2 * 2 * 4 * 3 * 7 * 3 * 2 = 10,080 possible states
-    # def generateUncertaintyTable(self, deadline_time=7):
-    #     pass
-    #     # # bool = [True, False]
-    #     # # edge_stats = [True, False, -1]
-    #     #
-    #     # vertex_options = self.graph.vertices
-    #     #
-    #     # people_vertices = self.graph.get_people_vertices()
-    #     # people_at_vertex_options = Environment.TrueFalseArrayCombinations(len(people_vertices))
-    #     #
-    #     # poss_blocked_edges = self.graph.get_poss_blocked_edges()
-    #     # blocked_edges_options = Environment.TrueFalseArrayCombinations(len(poss_blocked_edges))
-    #     #
-    #     # possiblePeople = self.possiblePeopleCombinations()
-    #     # for vertex in self.graph.vertices:
-    #     #     for people_1 in bool:
-    #     #         for people_2 in bool:
-    #     #             for num_carry in possiblePeople:
-    #     #                 for edge_stat in edge_stats:
-    #     #                     for time in range(1,deadline_time+1):
-    #     #                         for num_saved in possiblePeople:
-    #     #                             for terminated in bool:
-    #     #                                 self.stateDict[(vertex, people_1, people_2, num_carry, edge_stat, time, num_saved, terminated)] = ["possible actions", "value", "best"]
-
-    ################## NEEDED? #################
-    # def getPossibleActions(self, state):
-    #     pass
-    #     # actions_list = []
-    #     # additional_people = 0
-    #     # vertex, people_1, people_2, num_carry, edge_stat, time, num_saved, terminated = state
-    #     # current_vertext = self.graph.get_vertex_from_string("V" + vertex)
-    #     # vertices_with_weights = current_vertext.get_connected_vertices_with_weights()
-    #     # for neihgbor in vertices_with_weights:
-    #     #     curr_edge = self.graph.get_edge(neihgbor[0], current_vertext)
-    #     #     if curr_edge.__eq__(self.uncertain_edge):
-    #     #         if uncertain_edge_status is False:
-    #     #             continue  # Edge is blocked
-    #     #         if uncertain_edge_status is -1:
-    #     #             edge_stat = uncertain_edge_status
-    #     #
-    #     #     if neihgbor[0].__eq__(self.people1):
-    #     #         additional_people = neihgbor[0].pick_up()
-    #     #         people_1 = 0
-    #     #     if neihgbor[0].__eq__(self.people2):
-    #     #         additional_people = neihgbor[0].pick_up()
-    #     #         people_2 = 0
-    #     #     num_carry += additional_people
-    #     #     if neihgbor[0].is_shelter():
-    #     #         num_saved += num_carry
-    #     #         num_carry = 0
-    #     #
-    #     #     currState = (neihgbor[0], people_1, people_2, num_carry, edge_stat, time + neihgbor[1], num_saved, False)
-    #     #     currState = self.graph.is_mpd_terminate(currState)
-    #     #     actions_list.append(currState)
-
-    #  returns all the people combinations for example for people in 2 vertices {1,2} return {0, 1, 2, 3
-    # def possiblePeopleCombinations(self, prefix):
-    #     # possabilities = []
-    #     # possabilities.append(0)
-    #     # for vertex in self.graph.vertices:
-    #     #     if vertex.ppl_count > 0:
-    #     #         people_in_vertices.append(vertex.ppl_count)
-    #     #
-    #     # combinations = list(combinations(range(len(people_in_vertices)-1)))
-    #     # for combination in combinations:
-    #     #     num_of_people = 0
-    #     #     for item in combination:
-    #     #         num_of_people += people_in_vertices[int(item)]
-    #     #     possabilities.append(num_of_people)
-    #     # return possabilities
-    #     pass
+    def initEnvironmentVariables(self):
+        self.agent = None
+        self.agent_score = 0
+        self.dead_ppl = 0
+        self.total_ppl = sum(self.graph.get_people_array_with_shelter())
+        s_vertex = self.graph.vertices[0]
+        people_at_vertices_count = self.graph.get_people_array()
+        edges_blocked_status = self.graph.get_edges_blocked_status()
+        self.env_state = EnvState(s_vertex, people_at_vertices_count, edges_blocked_status,
+                                  0, 0, 0, False)
+        Environment.PERCEPT = self
 
     def initializeStatesDict(self):
         self.all_possible_states = self.env_state.getAllPossibleStates()
@@ -139,12 +69,27 @@ class Environment:
 
     # Determine the edge status for each uncertain edge
     def setRealEdgesStatus(self):
+        blockagesInput = input("Enter simulation Blockages (e.g. E21 means edge E2 is blocked):")
+        blockagesList = blockagesInput.split()
         for e in self.graph.edges:
             if 0 < e.block_prob < 1:
+                res = self.edgeInBlockagesInput(e, blockagesList)
+                if res is not -1:
+                    e.is_blocked = res
+                    continue
                 res = random.randint(1, 10)
                 if res <= e.block_prob*10:
                     e.is_blocked = True
 
+    def edgeInBlockagesInput(self, edge, blockagesList):
+        for b in blockagesList:
+            edgeStr = b[0:2]
+            val = int(b[2])
+            if edge.__eq__(self.graph.get_edge_from_string(edgeStr)):
+                if val is 1:
+                    return True
+                return False
+        return -1
     def ValueIteration(self):
         old_dict = deepcopy(self.stateUtilityAndPolicyDict)
         for s in self.all_possible_states:
@@ -199,7 +144,6 @@ class Environment:
 
     def getBestPolicy(self, ag_state):
         """
-
         :type ag_state: AgentState
         """
         for s in self.all_possible_states:
@@ -275,12 +219,13 @@ class Environment:
         self.agent_score = amount
 
     def simulation(self):
-        print "------------------------------------------------"
+        print("------------------------------------------------")
         self.initializeStatesDict()
         self.runValueIteration(Environment.VALUE_ITERATION_DELTA)
-        print_query("LET AN AGENT PLAY IT OUT? (Y/N)")
-        ans = input()
-        if ans == 'Y':
+        dictCopy = deepcopy(self.stateUtilityAndPolicyDict)
+        play = 'Y'
+        while play == 'Y':
+            self.stateUtilityAndPolicyDict = deepcopy(dictCopy)
             print_info("STARTING SIMULATION:")
             self.setRealEdgesStatus()
             self.add_agent(self.env_state.ag_loc)
@@ -308,8 +253,10 @@ class Environment:
             print_debug("GAME OVER")
             print_info("PRINTING ENVIRONMENT STATUS:")
             self.print_env()
-        else:
-            pass  # TODO: infrastructure for more simulations
+            print_query("Play again? (Y/N)")
+            play = input()
+            self.graph = deepcopy(self.grapCopy)
+            self.initEnvironmentVariables()
 
     def print_env(self):
         print_info("TIME IS: " + str(self.env_state.time))
