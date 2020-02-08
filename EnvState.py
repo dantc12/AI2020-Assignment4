@@ -193,18 +193,16 @@ class EnvState:
 
     def edge_blocked_in_state(self, edge):
         """
-
         :type edge: graph.Edge
         """
         return self.edges_blocked_status[edge.index-1] == "T"
 
     def compareToAgentState(self, agent_state):
         """
-
         :type agent_state: AgentState
         """
         for e in agent_state.curr_location.graph.edges:
-            if e.is_blocked != self.edge_blocked_in_state(e):
+            if e.is_blocked != self.edge_blocked_in_state(e) and self.edges_blocked_status[e.index-1] is not "U":
                 return False
         return self.ag_loc == agent_state.curr_location and \
                self.people_at_vertices == agent_state.curr_location.graph.get_people_array_with_shelter() and \
