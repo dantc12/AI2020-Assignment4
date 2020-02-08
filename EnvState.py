@@ -203,7 +203,7 @@ class EnvState:
 
         :type agent_state: AgentState
         """
-        for e in agent_state.curr_location.connected_edges:
+        for e in agent_state.curr_location.graph.edges:
             if e.is_blocked != self.edge_blocked_in_state(e):
                 return False
         return self.ag_loc == agent_state.curr_location and \

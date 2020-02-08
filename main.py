@@ -1,7 +1,7 @@
 from environment import Environment as Env
 from helper_funcs import print_query, print_info
 
-ENVIRONMENT_SETTINGS_FILE = "environment_settings1.txt"
+ENVIRONMENT_SETTINGS_FILE = "environment_settings_test.txt"
 
 # print_query("Please enter K vehicle loss penalty value:")
 # inp = raw_input()

@@ -90,6 +90,7 @@ class Environment:
                     return True
                 return False
         return -1
+
     def ValueIteration(self):
         old_dict = deepcopy(self.stateUtilityAndPolicyDict)
         for s in self.all_possible_states:

@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="281a7225-b545-441e-be02-7e9084065814" name="Default Changelist" comment="">
+    <list default="true" id="281a7225-b545-441e-be02-7e9084065814" name="Default Changelist" comment="improved value iteration to be generic and easily tuned with global variables. now it doesn't account for time (base reward is 0). in addition layed out infrastructure for allowing different simulations. now need to add code for new simulation after one is done.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/environment.py" beforeDir="false" afterPath="$PROJECT_DIR$/environment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/environment_settings1.txt" beforeDir="false" afterPath="$PROJECT_DIR$/environment_settings1.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/graph.py" beforeDir="false" afterPath="$PROJECT_DIR$/graph.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/helper_funcs.py" beforeDir="false" afterPath="$PROJECT_DIR$/helper_funcs.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EnvState.py" beforeDir="false" afterPath="$PROJECT_DIR$/EnvState.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/environment_settings_test.txt" beforeDir="false" afterPath="$PROJECT_DIR$/environment_settings_test.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -47,7 +45,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Python.main">
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
       <module name="AI2020-Assignment4" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -63,6 +61,24 @@
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="helper_funcs" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="AI2020-Assignment4" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="C:\Users\dantc\PycharmProjects\AI2020-Assignment4\venv\Scripts\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/helper_funcs.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="true" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
       <option name="REDIRECT_INPUT" value="false" />
@@ -93,6 +109,7 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.main" />
+        <item itemvalue="Python.helper_funcs" />
       </list>
     </recent_temporary>
   </component>
@@ -149,7 +166,14 @@
       <option name="project" value="LOCAL" />
       <updated>1580968794029</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="improved value iteration to be generic and easily tuned with global variables. now it doesn't account for time (base reward is 0). in addition layed out infrastructure for allowing different simulations. now need to add code for new simulation after one is done.">
+      <created>1580976796141</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1580976796141</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -174,6 +198,7 @@
     <MESSAGE value="i think i finished value iteration. the agent is using it's best policy to move. not sure about the utility values, but seems ok." />
     <MESSAGE value="cleaned up the code a biy" />
     <MESSAGE value="cleaned up the code a bit" />
-    <option name="LAST_COMMIT_MESSAGE" value="cleaned up the code a bit" />
+    <MESSAGE value="improved value iteration to be generic and easily tuned with global variables. now it doesn't account for time (base reward is 0). in addition layed out infrastructure for allowing different simulations. now need to add code for new simulation after one is done." />
+    <option name="LAST_COMMIT_MESSAGE" value="improved value iteration to be generic and easily tuned with global variables. now it doesn't account for time (base reward is 0). in addition layed out infrastructure for allowing different simulations. now need to add code for new simulation after one is done." />
   </component>
 </project>
